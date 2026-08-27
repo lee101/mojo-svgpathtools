@@ -1,11 +1,7 @@
-from std.algorithm import parallelize
 from std.math import cos, sin, sqrt
 from std.sys import simd_width_of
 
 comptime Ptr = UnsafePointer[Float64, AnyOrigin[mut=True]]
-comptime PARALLEL_THRESHOLD = 262144
-comptime PARALLEL_GRAIN = 131072
-comptime MAX_PARALLEL_TASKS = 16
 
 
 def p(addr: Int) -> Ptr:
@@ -374,26 +370,7 @@ def msp_bezier_points(
     var ctrl = p(ctrl_addr)
     var ts = p(ts_addr)
     var dst = p(dst_addr)
-    if n < PARALLEL_THRESHOLD:
-        bezier_points_range(ctrl, degree, ts, dst, 0, n)
-        return
-
-    comptime W = simd_width_of[DType.float64]()
-    var tasks = min(
-        MAX_PARALLEL_TASKS, (n + PARALLEL_GRAIN - 1) // PARALLEL_GRAIN
-    )
-    var chunk = (n + tasks - 1) // tasks
-    chunk = ((chunk + W - 1) // W) * W
-
-    @always_inline
-    def worker(
-        task: Int
-    ) {imm ctrl, imm degree, imm ts, imm dst, imm n, imm chunk}:
-        var start = task * chunk
-        var end = min(start + chunk, n)
-        bezier_points_range(ctrl, degree, ts, dst, start, end)
-
-    parallelize(worker, tasks, tasks)
+    bezier_points_range(ctrl, degree, ts, dst, 0, n)
 
 
 @export("msp_bezier_derivatives")
