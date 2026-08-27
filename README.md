@@ -78,18 +78,21 @@ checked against `svgpathtools` 1.7.2 before timing is reported.
 
 | Operation | Size | Mojo port | svgpathtools | Speedup |
 |---|---:|---:|---:|---:|
-| CubicBezier.points | 2,000,000 t values | 17.62 ms | 89.26 ms | 5.07x |
-| CubicBezier first derivatives | 2,000,000 t values | 12.32 ms | 94.61 ms | 7.68x |
-| Arc point evaluation | 500,000 t values | 17.06 ms | 2803.34 ms | 164.34x |
-| CubicBezier lengths | 2,000 curves | 28.92 ms | 675.66 ms | 23.36x |
-| Arc lengths | 2,000 curves | 40.86 ms | 1385.69 ms | 33.92x |
-| Path.length | 5,000 cubic segments | 67.70 ms | 1736.43 ms | 25.65x |
+| CubicBezier.points | 2,000,000 t values | 10.50 ms | 68.91 ms | 6.56x |
+| CubicBezier first derivatives | 2,000,000 t values | 8.32 ms | 64.17 ms | 7.71x |
+| Arc point evaluation | 500,000 t values | 11.46 ms | 2615.31 ms | 228.13x |
+| CubicBezier lengths | 2,000 curves | 25.07 ms | 450.86 ms | 17.99x |
+| Arc lengths | 2,000 curves | 26.10 ms | 1380.15 ms | 52.89x |
+| Path.length | 5,000 cubic segments | 73.00 ms | 1069.78 ms | 14.66x |
 
 These figures measure bulk geometry. Scalar calls remain in Python because a
 sub-microsecond formula does not benefit from crossing a foreign-function
 boundary.
 
-No GPU path is included; these benchmarks cover the CPU implementation only.
+No GPU path is included. Point evaluation has too little arithmetic intensity to
+justify host/device transfers, while the higher-intensity length kernels are
+already 14--53x faster than upstream on CPU and are outside the optimization
+target set. These benchmarks cover the CPU implementation only.
 
 ## How it works
 
