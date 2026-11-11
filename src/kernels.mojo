@@ -75,7 +75,7 @@ def bezier_points_range(
         var bx = ctrl[2] - ax
         var by = ctrl[3] - ay
         while i + W <= end:
-            var tv = ts.load[width=W](i)
+            var tv = ts.unsafe_load[width=W](i)
             var x = ax + tv * bx
             var y = ay + tv * by
             dst.store(2 * i, x.interleave(y))
@@ -88,7 +88,7 @@ def bezier_points_range(
         var cx = ctrl[4]
         var cy = ctrl[5]
         while i + W <= end:
-            var tv = ts.load[width=W](i)
+            var tv = ts.unsafe_load[width=W](i)
             var uv = 1.0 - tv
             var x = uv * uv * ax + 2.0 * uv * tv * bx + tv * tv * cx
             var y = uv * uv * ay + 2.0 * uv * tv * by + tv * tv * cy
@@ -104,7 +104,7 @@ def bezier_points_range(
         var dx = ctrl[6]
         var dy = ctrl[7]
         while i + W <= end:
-            var tv = ts.load[width=W](i)
+            var tv = ts.unsafe_load[width=W](i)
             var x = ax + tv * (
                 3.0 * (bx - ax)
                 + tv
@@ -146,7 +146,7 @@ def bezier_derivatives_range(
             var dx = ctrl[2] - ctrl[0]
             var dy = ctrl[3] - ctrl[1]
             while i + W <= end:
-                var tv = ts.load[width=W](i)
+                var tv = ts.unsafe_load[width=W](i)
                 var x = tv * 0.0 + dx
                 var y = tv * 0.0 + dy
                 dst.store(2 * i, x.interleave(y))
@@ -159,7 +159,7 @@ def bezier_derivatives_range(
             var cx = ctrl[4]
             var cy = ctrl[5]
             while i + W <= end:
-                var tv = ts.load[width=W](i)
+                var tv = ts.unsafe_load[width=W](i)
                 var uv = 1.0 - tv
                 var x = 2.0 * ((bx - ax) * uv + (cx - bx) * tv)
                 var y = 2.0 * ((by - ay) * uv + (cy - by) * tv)
@@ -175,7 +175,7 @@ def bezier_derivatives_range(
             var dx = ctrl[6]
             var dy = ctrl[7]
             while i + W <= end:
-                var tv = ts.load[width=W](i)
+                var tv = ts.unsafe_load[width=W](i)
                 var uv = 1.0 - tv
                 var x = (
                     3.0 * (bx - ax) * uv * uv
